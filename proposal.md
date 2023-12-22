@@ -8,33 +8,34 @@ https://trello.com/b/RZhRVg68/payroll-api-user-stories
 ### URL
 www.mywebsite.com
 ### Routes
+
 /
-: login page
+- login page
 
 /company
-: GET company page with list of departments that contain list of employees
+- GET company page with list of departments that contain list of employees
 
 /company/:department_id
-: GET singular department page with list of employees
-: DELETE (empty) department
+- GET singular department page with list of employees
+- DELETE (empty) department
 
 /company/:employee_id
-: GET view singular employee in company (route to their department?)
-: POST create new employee
-: DELETE employee
-: PUT update employee data
+- GET view singular employee in company (route to their department?)
+- POST create new employee
+- DELETE employee
+- PUT update employee data
 
 /company/department/:employee_id
-: GET view singular employee in department
-: POST create new employee
-: DELETE employee
-: PUT update employee data
+- GET view singular employee in department
+- POST create new employee
+- DELETE employee
+- PUT update employee data
 
 /company/positions/
-: GET view all positions in company
-: POST new position in company
-: PUT update position data
-: DELETE position (if not referenced by position_id in employees collection)
+- GET view all positions in company
+- POST new position in company
+- PUT update position data
+- DELETE position (if not referenced by position_id in employees collection)
 
 /company/positions/employees/:position_id
-: GET view all employees with the same position in the company
+- GET view all employees with the same position in the company
