@@ -1,14 +1,15 @@
 import '../database.js';
 import { getRandomInt } from '../data/generate-dummy-data.js';
-import { Employee, Company } from '../../models/payroll-models.js';
+import { Company, Employee } from '../../models/payroll-models.js';
 import fs from 'fs';
 
-let employeeData = JSON.parse(fs.readFileSync('./config/data/00-data-employee.json', 'utf8'));
+
 
 async function seedEmployeeDatabase() {
+  let employeeData = JSON.parse(fs.readFileSync('./config/data/00-data-employee.json', 'utf8'));
   try {
     await Employee.deleteMany();
-    await assignCompanyToEmployees();
+    employeeData = await assignCompanyToEmployees(employeeData);
     await Employee.create(employeeData);
     console.log('employee data seeded');
   } catch (err) {
@@ -16,7 +17,7 @@ async function seedEmployeeDatabase() {
   }
 }
 
-async function assignCompanyToEmployees() {
+async function assignCompanyToEmployees(employeeData) {
   try {
     let companies = await Company.find({});
     if (companies.length < 1) {
@@ -25,9 +26,10 @@ async function assignCompanyToEmployees() {
     for (let employee of employeeData) {
       employee.companyId = companies[getRandomInt(0, companies.length-1)]._id;
     }
+    return employeeData;
   } catch (err) {
     throw err;
   }
 }
 
-seedEmployeeDatabase();
+export { seedEmployeeDatabase };

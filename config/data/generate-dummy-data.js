@@ -1,4 +1,4 @@
-import fs from 'fs';
+eimport fs from 'fs';
 // Generates a random integer between min (inclusive) and max (inclusive)
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -141,9 +141,7 @@ function randomCompany() {
   return company;
 };
 
-function main() {
-  const N_EMPLOYEES = 56;
-  const N_COMPANIES = 2;
+function main(N_EMPLOYEES=56, N_COMPANIES=2) {
   const employees = [];
   const companies = [];
   for (let i = 0; i < N_EMPLOYEES; i++) {
@@ -153,8 +151,11 @@ function main() {
     companies.push(randomCompany());
   }
   
-  fs.writeFileSync('./00-data-company.json', JSON.stringify(companies));
-  fs.writeFileSync('./00-data-employee.json', JSON.stringify(employees));
+  fs.writeFileSync('./config/data/00-data-company.json', JSON.stringify(companies));
+  console.log('company data generated');
+
+  fs.writeFileSync('./config/data/00-data-employee.json', JSON.stringify(employees));
+  console.log('employee data generated');
 }
 
-export { getRandomInt }
+export { getRandomInt, main }
