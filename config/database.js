@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import 'dotenv/config.js';
 // shortcut to mongoose.connection object
 const db = mongoose.connection;
 
