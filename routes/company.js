@@ -50,7 +50,7 @@ router.delete('/:companyId', async (req, res) => {
   const companyId = req.params.companyId;
   const payload = req.body;
   try {
-    const deleteResult = deleteCompany(companyId);
+    const deleteResult = await deleteCompany(companyId);
     res.status(200).json(deleteResult);
   } catch (err) {
     res.status(500).json({

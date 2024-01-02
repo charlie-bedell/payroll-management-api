@@ -88,27 +88,25 @@ function newEmployees(companyId, payload) {
 function newCompany() {
   // TODO implement functionality for newCompany
   throw new Error("function 'newCompany' does not have any functionality");
-  return null;
 }
 
 async function deleteCompany(companyId) {
 	let company = await Company.findById(companyId);
-	let employees = await Employee.findOne({ companyId: companyId });
-	if (employees > 0) {
-		throw new Error(`there are still employees associated with ${company.companyName}. In order to remove this company, you need to remove all associated employees`);
-	}
-	let result = Company
-		.findByIdAndDelete(companyId)
-		.then((res) => {
-			return res;
-		})
-		.catch((err) => {
-			throw err;
-		});
-	return result;
+	let employee = await Employee.findOne({ companyId: companyId });
+  try {
+    if (employee) {
+      const employeesStillExistError = new Error(`there are still employees associated with ${company.companyName}. In order to remove this company, you need to remove all associated employees`);
+      throw employeesStillExistError;
+	  } else {
+      let result = await Company.findByIdAndDelete(companyId);
+      return result;
+    }
+  } catch (err) {
+    throw err;
+  }
 }
 
-async function deleteEmployee(companyId, employeeId) {
+function deleteEmployee(companyId, employeeId) {
 	let query = { _id: employeeId, companyId: companyId };
 	let result = Employee
 		.findOneAndDelete(query)
