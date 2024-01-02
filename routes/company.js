@@ -46,7 +46,7 @@ router.put('/:companyId', async (req, res) => {
   }
 });
 
-router.delete(':/companyId', async (req, res) => {
+router.delete('/:companyId', async (req, res) => {
   const companyId = req.params.companyId;
   const payload = req.body;
   try {
