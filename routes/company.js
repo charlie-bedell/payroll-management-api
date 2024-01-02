@@ -27,7 +27,7 @@ router.get('/:companyId', async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: `error in retrieving company: ${companyId}`,
-      error: err
+      error: `${err}`
     });
   }
 });
@@ -41,7 +41,7 @@ router.put('/:companyId', async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: `unable to update company: ${companyId}`,
-      error: err
+      error: `${err}`
     });
   }
 });
@@ -55,7 +55,7 @@ router.delete('/:companyId', async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: `unable to delete companyId: ${companyId}`,
-      error: err
+      error: `${err}`
     });
   }
 });
@@ -68,7 +68,7 @@ router.get('/:companyId/employees', async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: `error retreiving employees from ${companyId}`,
-      error: err
+      error: `${err}`
     });
   }
 });
@@ -82,8 +82,8 @@ router.post('/:companyId/employees', async (req, res) => {
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({
-      message: `error adding new employees`,
-      error: err
+      message: `unable to add new employees`,
+      error: `${err}`
     });
   }
 });
@@ -95,12 +95,12 @@ router.get('/:companyId/employees/:employeeId', async (req, res) => {
   const companyId = req.params.companyId;
   const employeeId = req.params.employeeId;
   try {
-    let employee = getEmployee(companyId, employeeId);
+    let employee = await getEmployee(companyId, employeeId);
     res.status(200).json(employee);
   } catch (err) {
     res.status(500).json({
       message: `unable to get employee with id ${employeeId} in company ${companyId}`,
-      error: err
+      error: `${err}`
     });
   }
 });
@@ -116,7 +116,7 @@ router.put('/:companyId/employees/:employeeId', async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: `unable to update employee ${employeeId} in company ${companyId}`,
-      error: err
+      error: `${err}`
     });
   }
 });
