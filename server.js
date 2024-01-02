@@ -1,5 +1,7 @@
 import 'dotenv/config.js';
 import './config/database.js';
+import companiesRouter from './routes/company.js';
+
 
 import express from 'express';
 import cors from 'cors';
