@@ -6,6 +6,8 @@ const companySchema = mongoose.Schema({
 	{ timestamps: true }
 );
 
+let Company = mongoose.model('Company', companySchema);
+
 const employeeSchema = mongoose.Schema({
 	firstName: { type: String },
 	lastName: { type: String },
@@ -16,11 +18,10 @@ const employeeSchema = mongoose.Schema({
 	bonus: { type: Number },
 	start_date: { type: Date },
 	end_date: { type: Date },
-	company_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' }
+	companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' }
 },
 	{ timestamps: true });
 
-let Company = mongoose.model('Company', companySchema);
 let Employee = mongoose.model('Employee', employeeSchema);
 
 export { Company, Employee }
