@@ -93,7 +93,7 @@ function newCompany() {
 
 async function deleteCompany(companyId) {
 	let company = await Company.findById(companyId);
-	let employees = await Employee.find({ companyId: companyId });
+	let employees = await Employee.findOne({ companyId: companyId });
 	if (employees > 0) {
 		throw new Error(`there are still employees associated with ${company.companyName}. In order to remove this company, you need to remove all associated employees`);
 	}
