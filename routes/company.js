@@ -32,6 +32,34 @@ router.get('/:companyId', async (req, res) => {
   }
 });
 
+router.put('/:companyId', async (req, res) => {
+  const companyId = req.params.companyId;
+  const payload = req.body;
+  try {
+    const updatedCompany = await updateCompany(companyId, payload);
+    res.status(200).json(updatedCompany);
+  } catch (err) {
+    res.status(500).json({
+      message: `unable to update company: ${companyId}`,
+      error: err
+    });
+  }
+});
+
+router.delete(':/companyId', async (req, res) => {
+  const companyId = req.params.companyId;
+  const payload = req.body;
+  try {
+    const deleteResult = deleteCompany(companyId);
+    res.status(200).json(deleteResult);
+  } catch (err) {
+    res.status(500).json({
+      message: `unable to delete companyId: ${companyId}`,
+      error: err
+    });
+  }
+});
+
 router.get('/:companyId/employees', async (req, res) => {
   const companyId = req.params.companyId;
   try {
@@ -66,6 +94,15 @@ router.post('/:companyId/employees', async (req, res) => {
 router.get('/:companyId/employees/:employeeId', async (req, res) => {
   const companyId = req.params.companyId;
   const employeeId = req.params.employeeId;
+  try {
+    let employee = getEmployee(companyId, employeeId);
+    res.status(200).json(employee);
+  } catch (err) {
+    res.status(500).json({
+      message: `unable to get employee with id ${employeeId} in company ${companyId}`,
+      error: err
+    });
+  }
 });
 
 // update employee
@@ -73,6 +110,15 @@ router.put('/:companyId/employees/:employeeId', async (req, res) => {
   const payload = req.body;
   const companyId = req.params.companyId;
   const employeeId = req.params.employeeId;
+  try {
+    let employee = await updateEmployee(companyId, employeeId, payload);
+    res.status(200).json(employee);
+  } catch (err) {
+    res.status(500).json({
+      message: `unable to update employee ${employeeId} in company ${companyId}`,
+      error: err
+    });
+  }
 });
 
 // list of departments?? TODO
@@ -81,3 +127,4 @@ router.get('/:companyId/departments/', async (req, res) => {
 });
 
 
+export default router;
