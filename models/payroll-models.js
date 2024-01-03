@@ -6,6 +6,8 @@ const companySchema = mongoose.Schema({
 	{ timestamps: true }
 );
 
+let Company = mongoose.model('Company', companySchema);
+
 const employeeSchema = mongoose.Schema({
 	firstName: { type: String },
 	lastName: { type: String },
@@ -20,14 +22,6 @@ const employeeSchema = mongoose.Schema({
 },
 	{ timestamps: true });
 
-let userSchema = mongoose.Schema({
-	username: { type: String, unique: true, required: true },
-	password: { type: String, required: true }
-},
-	{ timestamps: true });
+let Employee = mongoose.model('Employee', employeeSchema);
 
-const Company = mongoose.model('Company', companySchema);
-const Employee = mongoose.model('Employee', employeeSchema);
-const User = mongoose.model('User', userSchema);
-
-export { Company, Employee, User }
+export { Company, Employee }
