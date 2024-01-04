@@ -36,7 +36,7 @@ function validatePasswordStrength(pass) {
 async function createNewUser(payload) {
   // throw error if username is not an email
 	validateEmail(payload.username);
-  // throw error if passowrd is not strong enought
+  // throw error if password is not strong enough
 	validatePasswordStrength(payload.password);
 	// hashes a password and creates a new user;
 	payload.password = await bcrypt.hash(payload.password, 10);
@@ -59,7 +59,7 @@ async function loginExistingUser(payload) {
 		}
 
 	} else {
-		throw new Error('${payload.username} does not exist');
+		throw new Error(`${payload.username} does not exist`);
 	}
 }
 
