@@ -20,7 +20,7 @@ const employeeSchema = mongoose.Schema({
 },
 	{ timestamps: true });
 
-let userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
 	username: { type: String, unique: true, required: true },
 	password: { type: String, required: true }
 },
