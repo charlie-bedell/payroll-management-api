@@ -50,8 +50,10 @@ async function loginExistingUser(payload) {
 
 	if (user) {
 		const passwordMatches = await bcrypt.compare(payload.password, user.password);
+    // checks if the hashed password matches and sends a signed jwt token to the client
 		if (passwordMatches) {
-      // checks if the hashed password matches and sends a signed jwt token to the client
+      // encodes the username using the secret key as a token and returns it to the user
+      // the user sends this back to the server to authorize their actions
 			const token = jwt.sign({ username }, SECRET);
 			return token;
 		} else {
