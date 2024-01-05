@@ -27,3 +27,25 @@ function isLoggedIn(req, res, next) {
 }
 
 export { isLoggedIn }
+async function authorization(req, res, next) {
+  try {
+    const user = await User.findOne({username: req.userpayload.username});
+    const userRole = await UserRole.findById(user.userRoleId);
+    let userDepartment = null;
+    if (user.employeeId) {
+      const employee = await Employee.findById(user.employeeId);
+      userDepartment = employee.department;
+    }
+    req.user = {
+      username: user.username,
+      employeeId: user.employeeId,
+      companyId: user.companyId,
+      userRoleId: user.userRoleId,
+      role: userRole.role,
+      department: userDepartment};
+    next();
+  } catch (err) {
+    res.status(400).json({ message: 'unable to find user associated with jwt', error: `${err}`});
+  }
+}
+
