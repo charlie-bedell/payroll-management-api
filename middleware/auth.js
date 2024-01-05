@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { User, UserRole, Employee } from '../models/payroll-models.js';
 
 function isLoggedIn(req, res, next) {
   try {
@@ -10,7 +11,7 @@ function isLoggedIn(req, res, next) {
       if (token) {
         const payload = jwt.verify(token, process.env.SECRET);
         if (payload) {
-          req.user = payload;
+          req.userpayload = payload;
           next();
         } else {
           res.status(400).json({ error: 'token verification failed'});
