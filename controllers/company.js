@@ -1,4 +1,5 @@
 import { Company, Employee } from '../models/payroll-models.js';
+import mongoose from 'mongoose';
 
 function getCompany(companyId) {
 	let company = Company
@@ -14,8 +15,9 @@ function getCompany(companyId) {
 }
 
 function getEmployee(companyId, employeeId) {
+  
 	let employee = Employee
-		.find({ _id: employeeId, companyId: companyId })
+		  .find({ _id: employeeId, companyId: companyId })
 		.then((res) => {
 			return res;
 		})
