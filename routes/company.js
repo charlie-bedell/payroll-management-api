@@ -1,6 +1,6 @@
 import express from 'express';
 import { getCompany, getEmployee, getEmployees, updateCompany, updateEmployee, newEmployees, deleteCompany, deleteEmployee, newCompany } from '../controllers/company.js';
-
+import { isAdmin, isManager } from '../middleware/auth.js';
 const router = express.Router();
 // TODO every request made needs auth to makes sure somone from company A cant access company B
 // additionally, user roles must be checked in order control permissions to certain requests
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 // root route gets redirected here after auth
 // don't know if I want to have a high level overview of the company (like metrics)
 // or if 
-router.get('/:companyId', async (req, res) => {
+router.get('/:companyId', isAdmin, async (req, res) => {
   const companyId = req.params.companyId;
   try {
     const company = await getCompany(companyId);
@@ -32,7 +32,7 @@ router.get('/:companyId', async (req, res) => {
   }
 });
 
-router.put('/:companyId', async (req, res) => {
+router.put('/:companyId', isAdmin, async (req, res) => {
   const companyId = req.params.companyId;
   const payload = req.body;
   try {
@@ -46,7 +46,7 @@ router.put('/:companyId', async (req, res) => {
   }
 });
 
-router.delete('/:companyId', async (req, res) => {
+router.delete('/:companyId', isAdmin, async (req, res) => {
   const companyId = req.params.companyId;
   const payload = req.body;
   try {
@@ -60,7 +60,7 @@ router.delete('/:companyId', async (req, res) => {
   }
 });
 
-router.get('/:companyId/employees', async (req, res) => {
+router.get('/:companyId/employees', isAdmin, async (req, res) => {
   const companyId = req.params.companyId;
   try {
     const employees = await getEmployees(companyId);
@@ -74,7 +74,7 @@ router.get('/:companyId/employees', async (req, res) => {
 });
 
 // add one or many employees
-router.post('/:companyId/employees', async (req, res) => {
+router.post('/:companyId/employees', isAdmin, async (req, res) => {
   const payload = req.body;
   const companyId = req.params.companyId;
   try {
@@ -88,15 +88,13 @@ router.post('/:companyId/employees', async (req, res) => {
   }
 });
 
-
-
 // this will be specific employee page
 router.get('/:companyId/employees/:employeeId', async (req, res) => {
   const companyId = req.params.companyId;
   const employeeId = req.params.employeeId;
   try {
     let employee = await getEmployee(companyId, employeeId);
-    res.status(200).json(employee);
+    res.status(200).json({employee: employee});
   } catch (err) {
     res.status(500).json({
       message: `unable to get employee with id ${employeeId} in company ${companyId}`,
@@ -122,8 +120,9 @@ router.put('/:companyId/employees/:employeeId', async (req, res) => {
 });
 
 // list of departments?? TODO
-router.get('/:companyId/departments/', async (req, res) => {
+router.get('/:companyId/department/:departmentId', isManager, async (req, res) => {
   const companyId = req.params.companyId;
+  const departmentId = req.params.departmentId;
 });
 
 
