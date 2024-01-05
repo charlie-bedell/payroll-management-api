@@ -49,3 +49,20 @@ async function authorization(req, res, next) {
   }
 }
 
+function isAdmin(req, res, next) {
+  if (req.user.permission === 'Admin') {
+    next();
+  } else {
+    res.status(400).json({ error: `Permission Denied: ${req.user} does not have Admin access`});
+  }
+}
+
+function isManager(req, res,next) {
+  if ((req.permission === 'Admin') || (req.permission === 'Manager'))  {
+    next();
+  } else {
+    res.status(400).json({ error: `Permission Denied: ${req.user} does not have Manager Access`});
+  }
+}
+
+export { isLoggedIn, authorization, isAdmin, isManager, checkCompany }
