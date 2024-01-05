@@ -22,11 +22,62 @@ function isLoggedIn(req, res, next) {
       res.status(400).json({ error: 'not authorization header'});
     }
   } catch (err) {
+    
     res.status(400).json({ error: err });
   }
 }
 
-export { isLoggedIn }
+async function checkCompany(req, res, next) {
+  const reqParams = req.path.split('/');
+  const companyId = reqParams[1];
+  const employeeId = reqParams[3];
+  if (companyId == String(req.user.companyId)) {
+    if (employeeId) {
+      let employeeAccess = await allowEmployeeAccess(req.user.role, employeeId, req.user);
+      if (employeeAccess) {
+        next();
+      } else {
+        res.status(400).json({ error: 'permission denied: you cannot access that employee'});
+      }
+    } else {
+      next();
+    }
+  } else {
+    res.status(400).json({ message: 'permission denied, you cannot access that company'});
+  }
+}
+
+async function allowEmployeeAccess(role, employeeAccessAttempt, user) {
+  // depending on user role, handle access to a specific employee
+  // Admin: access all employees
+  // Manager: access all employees within their department
+  // Employee: can only access their employee page
+  switch (role) {
+  case 'Admin':
+    return true;
+  case 'Manager':
+    const employee = await Employee.findById(employeeAccessAttempt);
+    const department = employee.department;
+    console.log(user);
+    if (department === user.department) {
+      return true;
+    } else {
+      console.log('permission denied: cannot access employee outside of department');
+      return false;
+    }
+  case 'Employee':
+    if (employeeAccessAttempt == user.employeeId) {
+      return true;
+    } else {
+      console.log('permission denied: cannot access employee');
+      return false;
+    }
+  default:
+    console.log('permission denied: undefined role!');
+    return false; 
+  }
+}
+
 async function authorization(req, res, next) {
   try {
     const user = await User.findOne({username: req.userpayload.username});
