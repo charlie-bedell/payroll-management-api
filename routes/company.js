@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCompany, getEmployee, getEmployees, updateCompany, updateEmployee, newEmployees, deleteCompany, deleteEmployee, newCompany } from '../controllers/company.js';
+import { getCompany, getEmployee, getEmployees, updateCompany, updateEmployee, newEmployees, deleteCompany, deleteEmployee, newCompany, getDepartmentEmployees } from '../controllers/company.js';
 import { isAdmin, isManager } from '../middleware/auth.js';
 const router = express.Router();
 // TODO every request made needs auth to makes sure somone from company A cant access company B
@@ -10,15 +10,27 @@ const router = express.Router();
 // I think this will be a redirect to :companyId after login is verified (if super user).
 // Otherwise it will redirect to the specific employee
 router.get('/', async (req, res) => {
-  // if auth has not taken place, reroute to login
-  // on auth, retrieve companyId, employeeId, and role permissions from DB
-  // then decide where to route to
+  switch (req.user.role) {
+  case 'Admin':
+    res.redirect(`/companies/${req.user.companyId}/employees`);
+    break;
+  case 'Manager':
+    // TODO configure department route
+    res.redirect(`/companies/${req.user.companyId}/department/${req.user.department.split(' ').join('_')}`);
+    break;
+  case 'Employee':
+    res.redirect(`/companies/${req.user.companyId}/employees/${req.user.employeeId}`);
+    break;
+  default:
+    res.status(400).json({message: `unable to determine route`,
+                          error: `undefined role!`});
+  }
 });
 
 // root route gets redirected here after auth
 // don't know if I want to have a high level overview of the company (like metrics)
 // or if 
-router.get('/:companyId', isAdmin, async (req, res) => {
+router.get('/:companyId', async (req, res) => {
   const companyId = req.params.companyId;
   try {
     const company = await getCompany(companyId);
@@ -119,10 +131,35 @@ router.put('/:companyId/employees/:employeeId', async (req, res) => {
   }
 });
 
-// list of departments?? TODO
-router.get('/:companyId/department/:departmentId', isManager, async (req, res) => {
+router.delete('/:companyId/employees/:employeeId', async (req, res) => {
   const companyId = req.params.companyId;
-  const departmentId = req.params.departmentId;
+  const employeeId = req.params.employeeId;
+  try {
+    const deleteResult = await deleteEmployee(companyId, employeeId);
+    res.status(200).json({result: deleteResult});
+  } catch (err) {
+    res.status(500).json({message: `There was an error deleting employee ${employeeId}`,
+                          error: `${err}`});
+  }
+});
+
+// list of departments?? TODO
+router.get('/:companyId/department/:departmentName', isManager, async (req, res) => {
+  const companyId = req.params.companyId;
+  // departmentName will be snake_case
+  
+  let departmentName = req.params.departmentName;
+  departmentName = departmentName.split('_').join(' ');
+  
+  try {
+    const department = await getDepartmentEmployees(departmentName);
+    res.status(200).json(department);
+  } catch (err) {
+    res.status(500).json({
+      message: `unable to get employees from department ${departmentName} in company ${companyId}`,
+      error: `${err}`
+    });
+  }
 });
 
 

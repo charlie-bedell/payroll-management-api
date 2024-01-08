@@ -29,22 +29,27 @@ function isLoggedIn(req, res, next) {
 }
 
 async function checkCompany(req, res, next) {
-  const reqParams = req.path.split('/');
-  const companyId = reqParams[1];
-  const employeeId = reqParams[3];
-  if (companyId == String(req.user.companyId)) {
-    if (employeeId) {
-      let employeeAccess = await allowEmployeeAccess(req.user.role, employeeId, req.user);
-      if (employeeAccess) {
-        next();
+  let reqParams = req.path.split('/');
+  reqParams = reqParams.filter((x) => x.length >= 24);
+  if (reqParams.length == 0) {
+    next();
+  } else {
+    const companyId = reqParams[0];
+    const employeeId = reqParams[1];
+    if ((companyId == String(req.user.companyId))) {
+      if (employeeId) {
+        let employeeAccess = await allowEmployeeAccess(req.user.role, employeeId, req.user);
+        if (employeeAccess) {
+          next();
+        } else {
+          res.status(400).json({ error: 'permission denied: you cannot access that employee'});
+        }
       } else {
-        res.status(400).json({ error: 'permission denied: you cannot access that employee'});
+        next();
       }
     } else {
-      next();
+      res.status(400).json({ message: 'permission denied, you cannot access that company'});
     }
-  } else {
-    res.status(400).json({ message: 'permission denied, you cannot access that company'});
   }
 }
 
@@ -102,18 +107,18 @@ async function authorization(req, res, next) {
 }
 
 function isAdmin(req, res, next) {
-  if (req.user.permission === 'Admin') {
+  if (req.user.role === 'Admin') {
     next();
   } else {
-    res.status(400).json({ error: `Permission Denied: ${req.user} does not have Admin access`});
+    res.status(400).json({ error: `Permission Denied: ${req.user.role} does not have Admin access`});
   }
 }
 
 function isManager(req, res,next) {
-  if ((req.permission === 'Admin') || (req.permission === 'Manager'))  {
+  if ((req.user.role === 'Admin') || (req.user.role === 'Manager'))  {
     next();
   } else {
-    res.status(400).json({ error: `Permission Denied: ${req.user} does not have Manager Access`});
+    res.status(400).json({ error: `Permission Denied: ${req.user.role} does not have Manager Access`});
   }
 }
 

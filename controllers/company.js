@@ -121,4 +121,17 @@ function deleteEmployee(companyId, employeeId) {
 	return result;
 }
 
-export { getCompany, getEmployee, getEmployees, updateCompany, updateEmployee, newEmployees, deleteCompany, deleteEmployee, newCompany }
+function getDepartmentEmployees(departmentName) {
+  const query = {department: departmentName};
+  const result = Employee
+      .find(query)
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          throw err;
+        });
+  return result;
+}
+
+export { getCompany, getEmployee, getEmployees, updateCompany, updateEmployee, newEmployees, deleteCompany, deleteEmployee, newCompany, getDepartmentEmployees }
